@@ -4,6 +4,8 @@ export type Habit = {
   name: string;
   icon: string;
   time: string;
+  durationMinutes?: number;
+  timerDays?: Record<string, { seconds: number; startedAt?: number; stopAt?: number }>;
   start: string;
   days: number[];
   target: number;

@@ -40,7 +40,7 @@ test('authenticated API persists data, rejects stale writes and protects access'
     assert.match(login.headers.get('set-cookie'), /HttpOnly; SameSite=Strict/);
     cookie = login.headers.get('set-cookie').split(';')[0];
     assert.deepEqual(await (await request()).json(), { revision: 0, data: initialStore() });
-    const data = { ...initialStore(), rules: [{ id: 'my-rule', name: 'My rule', note: '', from: '', to: '' }] };
+    const data = { ...initialStore(), habits: [{ id: 'study', name: 'Study', icon: 'reading', time: '', start: '2026-10-18', days: [0, 1, 2, 3, 4, 5, 6], target: 0, durationMinutes: 120, timerDays: { '2026-10-18': { seconds: 1800 } }, logs: {} }], rules: [{ id: 'my-rule', name: 'My rule', note: '', from: '', to: '' }] };
     assert.equal((await request('PUT', { revision: 0, data }, 'https://evil.test')).status, 403);
     assert.equal((await request('PUT', { revision: 0, data: { ...data, habits: [null] } })).status, 400);
     assert.equal((await request('PUT', { revision: 0, data })).status, 200);

@@ -61,7 +61,7 @@ export function HabitEditor({
         name: "",
         icon: "reading",
         start: key(new Date()),
-        time: "09:00",
+        time: "",
         target: 0,
         days: [0, 1, 2, 3, 4, 5, 6],
         logs: {},
@@ -105,9 +105,8 @@ export function HabitEditor({
             />
           </label>
           {!value.target && <label>
-            Time
+            Time (optional)
             <input
-              required
               type="time"
               value={value.time}
               onChange={(e) => setValue({ ...value, time: e.target.value })}
@@ -122,7 +121,7 @@ export function HabitEditor({
               setValue({
                 ...value,
                 target: e.target.value === "weekly" ? 4 : 0,
-                time: e.target.value === "weekly" ? "" : value.time || "09:00",
+                time: e.target.value === "weekly" ? "" : value.time,
               })
             }
           >
@@ -184,6 +183,23 @@ export function HabitEditor({
             ? "Choose any days, at any time. Each completed day counts once toward your weekly goal."
             : "The time helps organise your day. Browser reminders are not enabled."}
         </p>
+        <label>
+          Tracking
+          <select value={value.durationMinutes ? "timer" : "check"}
+            onChange={(e) => setValue({ ...value, durationMinutes: e.target.value === "timer" ? 120 : 0 })}>
+            <option value="check">Check off</option>
+            <option value="timer">Timer</option>
+          </select>
+        </label>
+        {!!value.durationMinutes && <>
+          <label>
+            Time goal per day (minutes)
+            <input type="number" min="1" max="1440" step="1" required
+              value={value.durationMinutes}
+              onChange={(e) => setValue({ ...value, durationMinutes: Number(e.target.value) || 1 })} />
+          </label>
+          <p className="muted small">120 minutes = 2 hours. Pause and resume throughout the day. Reaching the goal completes the habit. The timer continues after closing the page and stops at midnight.</p>
+        </>}
         {confirm && (
           <p role="alert" className="small">
             Delete “{habit?.name}” and its entire history? This cannot be undone.

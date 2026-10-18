@@ -14,11 +14,28 @@ import {
 } from "./model";
 import type { Habit, Rule, Status } from "./model";
 import { useWorkspace } from "./useWorkspace";
+import { HabitTimer } from "./HabitTimer";
+import { settleTimer, toggleTimer } from "./timer";
 import { Summary } from "./Summary";
 const pages = ["Home", "Habits", "Summary", "Rules"] as const;
 function App() {
   const [today, setToday] = useState(() => new Date());
   const { store, setStore, status, error, ready, needsLogin, login, retry } = useWorkspace();
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    if (!ready) return;
+    const tick = () => {
+      const timestamp = Date.now();
+      setNow(timestamp);
+      setStore(current => {
+        const habits = current.habits.map(h => settleTimer(h, timestamp));
+        return habits.some((h, i) => h !== current.habits[i]) ? { ...current, habits } : current;
+      });
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [ready, setStore]);
   const [password, setPassword] = useState("");
   const [page, setPage] = useState<(typeof pages)[number]>("Home");
   const [date, setDate] = useState(key(today));
@@ -67,6 +84,9 @@ function App() {
       ...s,
       habits: s.habits.map((item) => {
         if (item.id !== h.id) return item;
+        item = settleTimer(item, Date.now(), true);
+        const timerDays = { ...item.timerDays };
+        if (!status) delete timerDays[date];
         const logs = { ...item.logs };
         if (status)
           logs[date] = {
@@ -78,6 +98,7 @@ function App() {
           ...item,
           start: status && date < item.start ? date : item.start,
           logs,
+          timerDays,
         };
       }),
     }));
@@ -89,7 +110,7 @@ function App() {
   function rows(list: Habit[]) {
     return list.map((h) => (
       <div
-        className={`habit-row ${h.logs[date]?.status === "done" ? "completed" : ""}`}
+        className={`habit-row ${h.durationMinutes ? "timed-habit" : ""} ${h.logs[date]?.status === "done" ? "completed" : ""}`}
         key={h.id}
       >
         <button className="habit-info" aria-label={`Edit ${h.name}`} onClick={() => setEditor(h)}>
@@ -143,6 +164,13 @@ function App() {
             "×"
           ) : null}
         </button>
+        {!!h.durationMinutes && <HabitTimer
+          habit={h} day={date} now={now}
+          canStart={date === key(new Date(now)) && scheduled(h, parse(date))}
+          toggle={() => setStore(current => ({ ...current, habits: current.habits.map(item =>
+            item.id === h.id ? toggleTimer(item, Date.now()) : item
+          ) }))}
+        />}
       </div>
     ));
   }
@@ -607,7 +635,11 @@ function App() {
             setStore((s) => ({
               ...s,
               habits: s.habits.some((v) => v.id === h.id)
-                ? s.habits.map((v) => (v.id === h.id ? h : v))
+                ? s.habits.map((v) => {
+                    if (v.id !== h.id) return v;
+                    const current = settleTimer(v, Date.now(), true);
+                    return { ...h, logs: current.logs, timerDays: current.timerDays };
+                  })
                 : [...s.habits, h],
             }));
             setEditor(null);

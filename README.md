@@ -14,7 +14,8 @@ React 19, TypeScript i Vite. Układ adaptuje się do szerokości okna.
 ## Funkcje
 
 - Home: wybór dnia, postęp, odhaczanie i uzasadnione pominięcia z notatką.
-- Habits: tworzenie, edycja i usuwanie nawyków; wybrane dni z godziną lub cel 1–7 razy w tygodniu bez godziny.
+- Habits: tworzenie, edycja i usuwanie nawyków; wybrane dni z opcjonalną godziną lub cel 1–7 razy w tygodniu bez godziny.
+- Timer: dzienny cel 1–1440 minut, start/pauza/wznowienie i automatyczne odhaczenie celu.
 - Summary: tydzień, miesiąc i rok; historia, skuteczność i zestawienie nawyków.
 - Rules: własne zasady z opcjonalnym przedziałem czasu, również przez północ.
 - Settings & data: eksport danych do JSON.
@@ -71,3 +72,10 @@ Ikony i znak marki skopiowano z `../MTIME/MTIME/Assets.xcassets`.
 Favicon `public/favicon.svg` zachowuje oryginalny znak nietoperza,
 z zaokrąglonym tłem i przezroczystymi narożnikami.
 Wytyczne projektu i lokalny Apple Design Skill są w `AGENTS.md` i `.agents/`.
+
+Timer zapisuje czas sesji i moment uruchomienia w bazie; odliczanie nie wymaga
+zapisu co sekundę. Po ponownym otwarciu strony dolicza upływ czasu, maksymalnie
+do celu lub północy wyznaczonej w strefie przeglądarki przy starcie. Nie rozpoczyna
+kolejnego dnia automatycznie. Dla celu tygodniowego ukończenie dziennego celu
+czasowego liczy się jako jedno wykonanie. Edycja nawyku pauzuje timer;
+wyczyszczenie wpisu zeruje czas wybranego dnia. Nadal można odhaczyć nawyk ręcznie.
