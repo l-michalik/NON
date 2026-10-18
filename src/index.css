@@ -1098,20 +1098,6 @@ legend {
   font-size: 12px;
   margin-bottom: 12px;
 }
-.icon-picker {
-  display: flex;
-  gap: 9px;
-}
-.icon-picker button {
-  width: 48px;
-  height: 45px;
-  display: grid;
-  place-items: center;
-  border-radius: 7px;
-  background: #f5f1ec;
-  color: #8e8072;
-}
-.icon-picker button[aria-pressed="true"],
 .day-picker button[aria-pressed="true"] {
   background: var(--brand);
   color: white;
@@ -1469,12 +1455,6 @@ legend {
   .modal-actions {
     flex-wrap: wrap;
   }
-  .icon-picker {
-    gap: 5px;
-  }
-  .icon-picker button {
-    width: 40px;
-  }
   footer {
     font-size: 6px;
   }
@@ -1503,3 +1483,126 @@ legend {
     margin-right: 10px;
   }
 }
+/* The full icon library stays inside the habit form, preserving unsaved fields. */
+.lucide-glyph {
+  background: none;
+  overflow: visible;
+}
+.icon-library-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+}
+.selected-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--brand);
+  font-size: 11px;
+}
+.selected-icon > span:last-child {
+  overflow-wrap: anywhere;
+}
+.selected-icon .glyph {
+  width: 19px;
+  height: 19px;
+}
+.icon-library-heading .text-button {
+  flex-shrink: 0;
+  font-size: 11px;
+}
+.icon-library {
+  margin-top: 10px;
+  padding: 14px;
+  background: #faf9f7;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.icon-library label {
+  margin: 0 0 13px;
+}
+.icon-search {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.icon-search input {
+  padding-right: 38px;
+  background: white;
+}
+.icon-search .icon-button {
+  position: absolute;
+  right: 4px;
+  top: 12px;
+}
+.icon-search input::-webkit-search-cancel-button {
+  display: none;
+}
+.icon-result-count {
+  color: #746b63;
+  font-size: 11px;
+  margin: 10px 0;
+}
+.icon-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 6px;
+  max-height: 264px;
+  overflow-y: auto;
+  padding: 5px;
+}
+.icon-results > button {
+  position: relative;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 4px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: #655b54;
+  background: white;
+}
+.icon-results > button > span:not(.glyph):not(.icon-selection-check) {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 10px;
+}
+.icon-results > button[aria-pressed="true"] {
+  background: var(--brand);
+  color: white;
+  border-color: var(--brand);
+}
+.icon-results > button:hover {
+  border-color: #ba9ba5;
+}
+.icon-selection-check {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: flex;
+}
+.icon-no-results {
+  font-size: 12px;
+  color: #746b63;
+  line-height: 1.6;
+  padding: 14px 0;
+}
+.icon-library .full {
+  margin-bottom: 0;
+}
+
+.workspace-gate {
+  width: min(100% - 40px, 420px);
+  margin: 12vh auto;
+}
+.workspace-gate form { display: grid; gap: 16px; }
+.workspace-gate input { width: 100%; min-height: 44px; }
+.workspace-gate [role="alert"] { overflow-wrap: anywhere; }

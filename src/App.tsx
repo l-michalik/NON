@@ -2,37 +2,24 @@ import { useEffect, useState } from "react";
 import { Glyph, Icon } from "./Icon";
 import { HabitEditor, Modal, RuleEditor } from "./Editors";
 import {
-  initialStore,
   key,
-  loadStore,
   onDay,
   parse,
   scheduled,
   shift,
   stats,
-  storageKey,
   streak,
   week,
   weekly,
 } from "./model";
-import type { Habit, Rule, Status, Store } from "./model";
+import type { Habit, Rule, Status } from "./model";
+import { useWorkspace } from "./useWorkspace";
 import { Summary } from "./Summary";
 const pages = ["Home", "Habits", "Summary", "Rules"] as const;
 function App() {
   const [today, setToday] = useState(() => new Date());
-  const [initial] = useState(() => {
-    try {
-      return { data: loadStore(new Date()), error: false };
-    } catch {
-      return {
-        data: { version: 1, demo: false, habits: [], rules: [] } as Store,
-        error: true,
-      };
-    }
-  });
-  const loadError = initial.error;
-  const [store, setStore] = useState<Store>(initial.data);
-  const [saveError, setSaveError] = useState("");
+  const { store, setStore, status, error, ready, needsLogin, login, retry } = useWorkspace();
+  const [password, setPassword] = useState("");
   const [page, setPage] = useState<(typeof pages)[number]>("Home");
   const [date, setDate] = useState(key(today));
   const [editor, setEditor] = useState<Habit | "new" | null>(null);
@@ -41,22 +28,6 @@ function App() {
   const [logEditor, setLogEditor] = useState<Habit | null>(null);
   const [note, setNote] = useState("");
   const [notice, setNotice] = useState("");
-  // Report browser storage failures while synchronizing the persistent store.
-  useEffect(() => {
-    if (loadError) return;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) loadStore(new Date());
-      localStorage.setItem(storageKey, JSON.stringify(store));
-      // eslint-disable-next-line react/set-state-in-effect
-      setSaveError("");
-    } catch {
-      // eslint-disable-next-line react/set-state-in-effect
-      setSaveError(
-        "Your changes could not be saved. Export a backup before closing this page.",
-      );
-    }
-  }, [store, loadError]);
   useEffect(() => {
     const id = setInterval(() => setToday(new Date()), 60000);
     return () => clearInterval(id);
@@ -197,6 +168,18 @@ function App() {
     a.click();
     URL.revokeObjectURL(url);
   }
+  if (!ready) return (
+    <main className="workspace-gate">
+      <h1>Your workspace.</h1>
+      <p role="status">{needsLogin ? "Enter your password to open NON." : status}</p>
+      {error && <p role="alert">{error}</p>}
+      {needsLogin ? <form onSubmit={(event) => { event.preventDefault(); void login(password); }}>
+        <label htmlFor="workspace-password">Password</label>
+        <input id="workspace-password" type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} />
+        <button className="primary" type="submit">Open workspace</button>
+      </form> : error && <button className="secondary" onClick={retry}>Try again</button>}
+    </main>
+  );
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -237,18 +220,15 @@ function App() {
             <Icon name="settings" size={18} /> Settings & data
           </button>
           <div className="local-status">
-            <span />{" "}
-            {store.demo
-              ? "Demo workspace · saved locally"
-              : "Your workspace · saved locally"}
+            <span /> {status}
           </div>
         </div>
       </aside>
       <div className="main-shell">
         <header className="topbar">
           <span>
-            {store.demo ? "Demo workspace" : "My workspace"}{" "}
-            <span className="breadcrumb">/</span> <strong>{page}</strong>
+            My workspace <span className="breadcrumb">/</span>{" "}
+            <strong>{page}</strong>
           </span>
           <button
             className="mobile-settings icon-button"
@@ -267,13 +247,8 @@ function App() {
           </span>
         </header>
         <main>
-          {(saveError || loadError) && (
-            <div role="alert" className="error-banner">
-              {loadError
-                ? "Saved data could not be read. It has been preserved in browser storage."
-                : saveError}
-            </div>
-          )}
+          {error && <div role="alert" className="error-banner">{error} <button className="text-button" onClick={retry}>Try again</button></div>}
+          <p className="small muted" role="status">{status}</p>
           <div className="page-heading">
             <div>
               <div className="eyebrow">
@@ -713,42 +688,13 @@ function App() {
       {settings && (
         <Modal title="Your workspace" close={() => setSettings(false)}>
           <p className="muted">
-            Your data stays in this browser. This desktop web version does not
-            sync with the iOS app. Export a backup to keep a copy.
+            Your changes are saved online in your private workspace. Open this
+            site on another device and enter your password to access your data.
+            Export a backup to keep a copy.
           </p>
           <button className="secondary full" onClick={exportData}>
             Export data as JSON
           </button>
-          {store.demo && (
-            <div className="settings-section">
-              <h3>Ready to make it yours?</h3>
-              <p className="muted">
-                You are exploring sample habits and history. Start a blank
-                workspace to track your own routine.
-              </p>
-              <button
-                className="primary"
-                onClick={() => {
-                  setStore({ version: 1, demo: false, habits: [], rules: [] });
-                  setSettings(false);
-                  setPage("Habits");
-                }}
-              >
-                Start my workspace
-              </button>
-            </div>
-          )}
-          {!store.demo && !store.habits.length && !loadError && (
-            <button
-              className="text-button"
-              onClick={() => {
-                setStore(initialStore(today));
-                setSettings(false);
-              }}
-            >
-              Explore demo workspace
-            </button>
-          )}
         </Modal>
       )}
     </div>

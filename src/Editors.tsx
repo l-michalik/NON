@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { Glyph, Icon } from "./Icon";
+import { Icon } from "./Icon";
+import { HabitIconPicker } from "./HabitIconPicker";
 import { key } from "./model";
 import type { Habit, Rule } from "./model";
 export function Modal({
@@ -89,29 +90,10 @@ export function HabitEditor({
             onChange={(e) => setValue({ ...value, name: e.target.value })}
           />
         </label>
-        <fieldset>
-          <legend>Icon</legend>
-          <div className="icon-picker">
-            {[
-              "gym",
-              "reading",
-              "skincare",
-              "prayer",
-              "creatine",
-              "vitamins",
-            ].map((icon) => (
-              <button
-                type="button"
-                key={icon}
-                aria-label={icon}
-                aria-pressed={value.icon === icon}
-                onClick={() => setValue({ ...value, icon })}
-              >
-                <Glyph name={icon} />
-              </button>
-            ))}
-          </div>
-        </fieldset>
+        <HabitIconPicker
+          value={value.icon}
+          onChange={(icon) => setValue({ ...value, icon })}
+        />
         <div className="form-grid">
           <label>
             Start date

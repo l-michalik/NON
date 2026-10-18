@@ -37,6 +37,22 @@ export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   );
 }
 export function Glyph({ name }: { name: string }) {
+  if (name.startsWith("lucide:")) {
+    return (
+      <svg
+        className="glyph lucide-glyph"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <use href={`/icons/lucide.svg#${name.slice(7)}`} />
+      </svg>
+    );
+  }
   return (
     <span
       className="glyph"
