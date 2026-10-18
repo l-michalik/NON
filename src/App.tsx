@@ -104,8 +104,7 @@ function App() {
                 : h.days.length === 7
                   ? "Every day"
                   : "Selected days"}
-              <span>·</span>
-              {h.time}
+              {!h.target && h.time && <><span>·</span>{h.time}</>}
             </span>
           </span>
         </button>

@@ -14,7 +14,7 @@ React 19, TypeScript i Vite. Układ adaptuje się do szerokości okna.
 ## Funkcje
 
 - Home: wybór dnia, postęp, odhaczanie i uzasadnione pominięcia z notatką.
-- Habits: tworzenie, edycja i usuwanie nawyków; wybrane dni lub cel tygodniowy.
+- Habits: tworzenie, edycja i usuwanie nawyków; wybrane dni z godziną lub cel 1–7 razy w tygodniu bez godziny.
 - Summary: tydzień, miesiąc i rok; historia, skuteczność i zestawienie nawyków.
 - Rules: własne zasady z opcjonalnym przedziałem czasu, również przez północ.
 - Settings & data: eksport danych do JSON.

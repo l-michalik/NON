@@ -76,7 +76,7 @@ export function HabitEditor({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (value.name.trim()) save({ ...value, name: value.name.trim() });
+          if (value.name.trim()) save({ ...value, name: value.name.trim(), time: value.target ? "" : value.time });
         }}
       >
         <label>
@@ -104,7 +104,7 @@ export function HabitEditor({
               onChange={(e) => setValue({ ...value, start: e.target.value })}
             />
           </label>
-          <label>
+          {!value.target && <label>
             Time
             <input
               required
@@ -112,7 +112,7 @@ export function HabitEditor({
               value={value.time}
               onChange={(e) => setValue({ ...value, time: e.target.value })}
             />
-          </label>
+          </label>}
         </div>
         <label>
           Frequency
@@ -122,6 +122,7 @@ export function HabitEditor({
               setValue({
                 ...value,
                 target: e.target.value === "weekly" ? 4 : 0,
+                time: e.target.value === "weekly" ? "" : value.time || "09:00",
               })
             }
           >
@@ -135,7 +136,7 @@ export function HabitEditor({
             <input
               type="number"
               min="1"
-              max="6"
+              max="7"
               required
               value={value.target}
               onChange={(e) =>
@@ -179,7 +180,9 @@ export function HabitEditor({
           </div>
         )}
         <p className="muted small">
-          The time helps organise your day. Browser reminders are not enabled.
+          {value.target
+            ? "Choose any days, at any time. Each completed day counts once toward your weekly goal."
+            : "The time helps organise your day. Browser reminders are not enabled."}
         </p>
         <div className="modal-actions">
           {habit && (
