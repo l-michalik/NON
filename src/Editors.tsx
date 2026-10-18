@@ -184,6 +184,11 @@ export function HabitEditor({
             ? "Choose any days, at any time. Each completed day counts once toward your weekly goal."
             : "The time helps organise your day. Browser reminders are not enabled."}
         </p>
+        {confirm && (
+          <p role="alert" className="small">
+            Delete “{habit?.name}” and its entire history? This cannot be undone.
+          </p>
+        )}
         <div className="modal-actions">
           {habit && (
             <button
@@ -194,13 +199,13 @@ export function HabitEditor({
               {confirm ? "Confirm deletion" : "Delete habit"}
             </button>
           )}
-          <button type="button" className="secondary" onClick={close}>
+          <button type="button" className="secondary" onClick={() => confirm ? setConfirm(false) : close()}>
             Cancel
           </button>
           <button
             className="primary"
             disabled={
-              !value.name.trim() || (!value.target && !value.days.length)
+              confirm || !value.name.trim() || (!value.target && !value.days.length)
             }
           >
             Save habit

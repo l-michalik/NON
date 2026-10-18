@@ -1606,3 +1606,9 @@ legend {
 .workspace-gate form { display: grid; gap: 16px; }
 .workspace-gate input { width: 100%; min-height: 44px; }
 .workspace-gate [role="alert"] { overflow-wrap: anywhere; }
+
+.habit-edit {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}

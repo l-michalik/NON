@@ -92,7 +92,7 @@ function App() {
         className={`habit-row ${h.logs[date]?.status === "done" ? "completed" : ""}`}
         key={h.id}
       >
-        <button className="habit-info" onClick={() => setEditor(h)}>
+        <button className="habit-info" aria-label={`Edit ${h.name}`} onClick={() => setEditor(h)}>
           <span className="habit-icon">
             <Glyph name={h.icon} />
           </span>
@@ -113,14 +113,18 @@ function App() {
           <span className="streak-unit"> {h.target ? "weeks" : "days"}</span>
         </span>
         <button
-          className="more"
-          aria-label={`More options for ${h.name}`}
+          className={page === "Habits" ? "text-button habit-edit" : "more"}
+          aria-label={page === "Habits" ? `Edit ${h.name}` : `Entry options for ${h.name}`}
           onClick={() => {
+            if (page === "Habits") {
+              setEditor(h);
+              return;
+            }
             setNote(h.logs[date]?.note || "");
             setLogEditor(h);
           }}
         >
-          ···
+          {page === "Habits" ? "Edit" : "···"}
         </button>
         <button
           className={`check-button ${h.logs[date]?.status || ""}`}
@@ -644,6 +648,15 @@ function App() {
           <p className="muted">
             {selected.toLocaleDateString("en-GB", { dateStyle: "full" })}
           </p>
+          <button
+            className="text-button habit-edit"
+            onClick={() => {
+              setEditor(logEditor);
+              setLogEditor(null);
+            }}
+          >
+            Edit or delete habit
+          </button>
           <label>
             Reason for a justified skip
             <textarea
