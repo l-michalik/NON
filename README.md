@@ -2,6 +2,9 @@
 
 Projekt React + TypeScript z Vite.
 
+Zasady pracy AI i projektowania interfejsu: [AGENTS.md](AGENTS.md).
+Podstawą jest lokalny [Apple Design Skill](.agents/skills/apple-design/SKILL.md).
+
 ## Uruchomienie
 
 ```sh
